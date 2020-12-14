@@ -1,6 +1,6 @@
 # EIC_Root_F4A_Merrick_Lavinsky
 
-# This document is for the EIC R&D efforts to determine the best setup for the new detector. These simulations are of the EIC with combined silicon and gaseous detectors. The inal result will be a combination of Alexander Kiselev's repository (https://github.com/eic/EicToyModel.git) and Hakann Wennlof's repository (https://gitlab.com/hwennlof/fun4allgdmlimport.git). Shown below are the commands I use to start each simulation in Fun4All.
+# This document is for the EIC R&D efforts to determine the best setup for the new detector. These simulations are of the EIC with combined silicon and gaseous detectors. The inal result will be a combination of Alexander Kiselev's repository (https://github.com/eic/EicToyModel.git) and Hakan Wennlof's repository (https://gitlab.com/hwennlof/fun4allgdmlimport.git). Shown below are the commands I use to start each simulation in Fun4All.
 
 
 # 1) Using Singularity and cvmfs, I visualized Alexanders Fun4All_G4_Tracking.C macro via the following commands:
