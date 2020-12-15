@@ -24,7 +24,7 @@ R__LOAD_LIBRARY(libeicdetectors.so)
 R__LOAD_LIBRARY(libg4trackfastsim.so)
 
 // This scrip is simple, sorry: either Qt display or tracking; uncomment if want to see the geometry; 
-#define _QT_DISPLAY_
+//#define _QT_DISPLAY_
 
 void Fun4All_G4_Tracking(int nEvents = 1000)
 {
@@ -41,7 +41,7 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
     gen->set_name("pi+");           	  // geantino, pi-, pi+, mu-, mu+, e-., e+, proton, ... 
     gen->set_vtx(0,0,0);		  // Vertex generation range
     gen->set_mom_range(10., 10.);	  // Momentum generation range in GeV/c
-    gen->set_eta_range(2,2);		  // Detector coverage around theta ~ 90 degrees in this example (-.1,.1)
+    gen->set_eta_range(-.1,.1);		  // Detector coverage around theta ~ 90 degrees in this example
     gen->set_phi_range(0.,2.*TMath::Pi());
     se->registerSubsystem(gen); 
   }
