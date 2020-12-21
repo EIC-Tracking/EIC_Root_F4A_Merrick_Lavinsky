@@ -42,7 +42,7 @@ int TrackFastSimEval::Init(PHCompositeNode *topNode)
 
   _h1d_Delta_mom = new TH1D("_h1d_Delta_mom", "#frac{#Delta p}{truth p}", 100, -0.2, 0.2);
 
-  _eta_dist = new TH1D("_eta_dist", "Eta Distribution of GEM hits", 100, -5, 5);
+  _eta_dist = new TH1D("_eta_dist", "Eta Distribution of Hits", 100, -5, 5);
 
   return Fun4AllReturnCodes::EVENT_OK;
 } // TrackFastSimEval::Init()
@@ -63,7 +63,7 @@ int TrackFastSimEval::process_event(PHCompositeNode *topNode)
 
   {
     auto range = _truth_container->GetPrimaryParticleRange();
-
+    
     // Loop through all the truth particles;
     for (auto truth_itr = range.first; truth_itr != range.second; ++truth_itr) {
       auto g4particle = truth_itr->second;
@@ -83,7 +83,14 @@ int TrackFastSimEval::process_event(PHCompositeNode *topNode)
 	  TVector3 reco_mom (     track->get_px(),      track->get_py(),      track->get_pz());
 
 	  _h1d_Delta_mom->Fill((reco_mom.Mag() - truth_mom.Mag()) / truth_mom.Mag());
-	  _eta_dist->Fill(track->get_px());
+	  //float Gem_Z_1 = 1200;// * etm::mm;
+	  //float Gem_Z_2 = 1300;// * etm::mm;
+	  
+	  //	  if(track->get_z() <= Gem_Z_1+10 || track->get_z() >= Gem_Z_1-10 || track->get_z() >= Gem_Z_2-10 || track->get_z() <= Gem_Z_2+10){	 
+	    cout << track->get_eta() << endl;
+	    //_eta_dist->Fill(track->get_eta());
+	    _eta_dist->Fill(track->get_eta());
+	    //}	  
 	  break;
 	} //if
       } //for 
