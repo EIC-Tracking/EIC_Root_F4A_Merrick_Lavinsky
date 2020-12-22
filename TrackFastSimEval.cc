@@ -30,6 +30,7 @@ TrackFastSimEval::TrackFastSimEval(const string &name, const string &filename,
   , _event(0)
   , _h1d_Delta_mom(nullptr)
   , _eta_dist(nullptr)
+  , ED_Gen(nullptr)
 {
 } // TrackFastSimEval::TrackFastSimEval()
 
@@ -42,8 +43,10 @@ int TrackFastSimEval::Init(PHCompositeNode *topNode)
 
   _h1d_Delta_mom = new TH1D("_h1d_Delta_mom", "#frac{#Delta p}{truth p}", 100, -0.2, 0.2);
 
-  _eta_dist = new TH1D("_eta_dist", "Eta Distribution of Hits", 100, -5, 5);
+  _eta_dist = new TH1D("_eta_dist", "Eta Distribution of Tracks; Eta; Counts", 100, -5, 5);
 
+  ED_Gen = new TH1D("ED_Gen", "Eta Distribution of Generated Hits; Eta; Counts", 100, -5, 5);
+  
   return Fun4AllReturnCodes::EVENT_OK;
 } // TrackFastSimEval::Init()
 
@@ -69,6 +72,19 @@ int TrackFastSimEval::process_event(PHCompositeNode *topNode)
       auto g4particle = truth_itr->second;
       if (!g4particle) continue;
 
+      TVector3 truth_mom(g4particle->get_px(), g4particle->get_py(), g4particle->get_pz());
+      //TVector3 reco_mom (track->get_px(), track->get_py(), track->get_pz());
+      float theta = acos(g4particle->get_pz()/truth_mom.Mag());
+      float eta;
+      if(theta>0){
+	eta = -log(tan(theta/2));}
+      else{ eta = -(-log(tan((M_PI + theta)/2)));
+      }
+      //std::cout<<" theta "<<theta<<" eta "<<eta<<std::endl;
+      //cout << track->get_id() << endl;
+      ED_Gen->Fill(eta);
+      
+      
       // Loop through all the reconstructed particles and find a match; how about std::map?;
       for (auto track_itr = _trackmap->begin(); track_itr != _trackmap->end(); track_itr++) {
 	auto track = dynamic_cast<SvtxTrack_FastSim *>(track_itr->second);
@@ -77,20 +93,19 @@ int TrackFastSimEval::process_event(PHCompositeNode *topNode)
 	  continue;
 	} //if
 
+
+	cout << g4particle->get_pid() << endl;
 	// Matching reconstructed particle found, use it and break;
 	if ((track->get_truth_track_id() - g4particle->get_track_id()) == 0) {
 	  TVector3 truth_mom(g4particle->get_px(), g4particle->get_py(), g4particle->get_pz());
 	  TVector3 reco_mom (     track->get_px(),      track->get_py(),      track->get_pz());
 
 	  _h1d_Delta_mom->Fill((reco_mom.Mag() - truth_mom.Mag()) / truth_mom.Mag());
-	  //float Gem_Z_1 = 1200;// * etm::mm;
-	  //float Gem_Z_2 = 1300;// * etm::mm;
 	  
-	  //	  if(track->get_z() <= Gem_Z_1+10 || track->get_z() >= Gem_Z_1-10 || track->get_z() >= Gem_Z_2-10 || track->get_z() <= Gem_Z_2+10){	 
-	    cout << track->get_eta() << endl;
-	    //_eta_dist->Fill(track->get_eta());
-	    _eta_dist->Fill(track->get_eta());
-	    //}	  
+	  //cout << track->get_eta() << endl;
+	  //if()
+	  _eta_dist->Fill(track->get_eta());
+	  //}	  
 	  break;
 	} //if
       } //for 
@@ -107,7 +122,8 @@ int TrackFastSimEval::End(PHCompositeNode *topNode)
 
   _h1d_Delta_mom->Write();
   _eta_dist->Write();
-
+  ED_Gen->Write();
+  
   return Fun4AllReturnCodes::EVENT_OK;
 } // TrackFastSimEval::End()
 

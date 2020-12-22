@@ -24,7 +24,7 @@ R__LOAD_LIBRARY(libeicdetectors.so)
 R__LOAD_LIBRARY(libg4trackfastsim.so)
 
 // This scrip is simple, sorry: either Qt display or tracking; uncomment if want to see the geometry; 
-#define _QT_DISPLAY_
+//#define _QT_DISPLAY_
 
 void Fun4All_G4_Tracking(int nEvents = 1000)
 {
@@ -37,11 +37,10 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
   // Particle Generator Setup;
   {
     auto gen = new PHG4ParticleGenerator();
-
-    gen->set_name("geantino");           	  // geantino, pi-, pi+, mu-, mu+, e-., e+, proton, ... 
+    gen->set_name("pi+");           	  // geantino, pi-, pi+, mu-, mu+, e-., e+, proton, ... 
     gen->set_vtx(0,0,0);		  // Vertex generation range
     gen->set_mom_range(10,10);	  // Momentum generation range in GeV/c
-    gen->set_eta_range(-0.1,0.1);		  // Detector coverage around theta ~ 90 degrees in this example
+    gen->set_eta_range(0,4);		  // Detector coverage around theta
     gen->set_phi_range(0.,2.*TMath::Pi());
     se->registerSubsystem(gen); 
   }
@@ -56,7 +55,7 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
   EicGeoParData::ImportMediaFile("../../examples/eicroot/media.geo");
 
   // EicRoot vertex tracker; be aware: "VST" will also become a SuperDetector name;
-  
+  /*
   auto vst = new EicRootVstSubsystem("VST");
   {
     vst->SetGeometryType(EicGeoParData::NoStructure);
@@ -103,8 +102,9 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
       //   - segmentation in phi;
       //   - Z offset from 0.0 (default);
       //   - azimuthal rotation from 0.0 (default);
-      mmt->AddBarrel(layer, 2000 * etm::mm, 2, 300 * etm::mm, 3, 0.0, 0.0);
+      mmt->AddBarrel(layer, 600 * etm::mm, 2, 300 * etm::mm, 3, 0.0, 0.0);
       mmt->AddBarrel(layer, 600 * etm::mm, 3, 400 * etm::mm, 4, 0.0, 0.0);
+      //mmt->AddBarrel(layer, 2400 * etm::mm, 3, 600 * etm::mm, 4, 0.0, 0.0);
       
       mmt->SetTransparency(50);
     }
@@ -112,7 +112,7 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
     g4Reco->registerSubsystem(mmt);
   }
   
-  
+  */
   // Forward GEM tracker module(s);
   auto fgt = new EicRootGemSubsystem("FGT");
   {
@@ -131,8 +131,11 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
       //   - gas volume center radius;
       //   - Z offset from 0.0 (default);
       //   - azimuthal rotation from 0.0 (default);
-      fgt->AddWheel(sbs, 12, 420 * etm::mm, 1200 * etm::mm, 0);
-      fgt->AddWheel(sbs, 12, 420 * etm::mm, 1300 * etm::mm, 0);
+      fgt->AddWheel(sbs, 12, 420 * etm::mm, 800 * etm::mm, 0);
+      fgt->AddWheel(sbs, 12, 420 * etm::mm, 900 * etm::mm, 0);
+      fgt->AddWheel(sbs, 12, 420 * etm::mm, 1000 * etm::mm, 0);
+      fgt->AddWheel(sbs, 12, 420 * etm::mm, 1100 * etm::mm, 0);
+      //fgt->AddWheel(sbs, 12, 420 * etm::mm, -1300 * etm::mm, 0);
     }
 
     g4Reco->registerSubsystem(fgt);
@@ -150,30 +153,31 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
   // Ideal track finder and Kalman filter;
   {
     auto kalman = new PHG4TrackFastSim("PHG4TrackFastSim");
-
+    
     kalman->set_use_vertex_in_fitting(false);
     
     // Silicon tracker hits;
-    
+    /*
     kalman->add_phg4hits(vst->GetG4HitName(),		// const std::string& phg4hitsNames
-			 PHG4TrackFastSim::Cylinder,	// const DETECTOR_TYPE phg4dettype
-			 999.,				// radial-resolution [cm] (this number is not used in cylindrical geometry)
-			 // 20e-4/sqrt(12) cm = 5.8e-4 cm, to emulate 20x20 um pixels;
-			 5.8e-4,			// azimuthal (arc-length) resolution [cm]
-			 5.8e-4,			// longitudinal (z) resolution [cm]
-			 1,				// efficiency (fraction)
-			 0);				// hit noise
+    PHG4TrackFastSim::Cylinder,	// const DETECTOR_TYPE phg4dettype
+			   999.,				// radial-resolution [cm] (this number is not used in cylindrical geometry)
+			   // 20e-4/sqrt(12) cm = 5.8e-4 cm, to emulate 20x20 um pixels;
+			   5.8e-4,			// azimuthal (arc-length) resolution [cm]
+			   5.8e-4,			// longitudinal (z) resolution [cm]
+			   1,				// efficiency (fraction)
+			   0);				// hit noise
 
-    // MM tracker hits;
-    kalman->add_phg4hits(mmt->GetG4HitName(),		// const std::string& phg4hitsNames
-			 PHG4TrackFastSim::Cylinder,	// const DETECTOR_TYPE phg4dettype
-			 999.,				// radial-resolution [cm] (this number is not used in cylindrical geometry)
-			 // Say 50um resolution?; [cm];
-			 50e-4,			        // azimuthal (arc-length) resolution [cm]
-			 50e-4,		        	// longitudinal (z) resolution [cm]
-			 1,				// efficiency (fraction)
-			 0);				// hit noise
+  // MM tracker hits;
+    //kalman->add_phg4hits(mmt->GetG4HitName(),		// const std::string& phg4hitsNames
+  PHG4TrackFastSim::Cylinder,	// const DETECTOR_TYPE phg4dettype
+			   999.,				// radial-resolution [cm] (this number is not used in cylindrical geometry)
+			   // Say 50um resolution?; [cm];
+			   50e-4,			        // azimuthal (arc-length) resolution [cm]
+			   50e-4,		        	// longitudinal (z) resolution [cm]
+			   1,				// efficiency (fraction)
+			   0);				// hit noise
     
+    */
     // GEM tracker hits; should work;
     kalman->add_phg4hits(fgt->GetG4HitName(),		// const std::string& phg4hitsNames
 			 PHG4TrackFastSim::Vertical_Plane,	// const DETECTOR_TYPE phg4dettype

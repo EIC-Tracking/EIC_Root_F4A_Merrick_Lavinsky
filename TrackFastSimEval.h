@@ -45,6 +45,9 @@ class TrackFastSimEval : public SubsysReco {
   //1D Eta Distribution Hist;
   TH1D *_eta_dist;
   
+  //1D Generated Eta Distribution Hist;
+  TH1D *ED_Gen;
+  
 };
 
 #endif
