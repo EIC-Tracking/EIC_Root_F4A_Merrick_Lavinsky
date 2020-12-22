@@ -33,5 +33,12 @@ export ROOT_INCLUDE_PATH=/scratch/build/include/etm:${ROOT_INCLUDE_PATH}
 cd ../macro
 
 root -l Fun4All_G4_Tracking.C
-.q
+
+root -l g4eval.root
+
+_eta_dist->Draw() #Plots Histogram of tracks 
+
+ED_Gen->Draw() #Plots histogram of generated particle's eta
+
+
 >>>>>>> fb9518b93ce41117246864bfec6bc21d1ed072ac
