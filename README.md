@@ -7,9 +7,9 @@ singularity shell -B /cvmfs:/cvmfs -B /home/merrick/EicToyModel:/scratch /cvmfs/
 
 source /cvmfs/eic.opensciencegrid.org/x8664_sl7/opt/fun4all/core/bin/eic_setup.sh -n
 
-cd /scratch && mkdir -p /scratch/build
+source /cvmfs/eic.opensciencegrid.org/x8664_sl7/opt/fun4all/core/bin/setup_local.sh $HOME/myinstall
 
-cd /scratch/build
+mkdir -p /scratch/build && cd /scratch/build
 
 cmake -DCMAKE_INSTALL_PREFIX=. -DGEANT=YES -Wno-dev -DVGM=${OPT_SPHENIX}/vgm ..
 
@@ -34,4 +34,23 @@ cd ../macro
 
 root -l Fun4All_G4_Tracking.C
 .q
->>>>>>> fb9518b93ce41117246864bfec6bc21d1ed072ac
+
+#Newest Version (12/29/2020). To Add rest of Hakan's GDML parts
+#Add the following files to the macro directory in Alexander's EicToyModel.
+#From Hakan's HybridBaseLine Directory (fun4allgdmlimport/macros/hybridBaseline)
+
+detector_setup.h
+Fst_GDML_.gdml
+Bst_GDML_.gdml
+
+#From $HOME/myinstall/include/gdmlimporter
+GdmlImportDetectorSubsystem.h
+SimpleNtuple.h
+TrackFastSimEval.h
+
+#And from /fun4allgdmlimport/source
+GdmlImportDetectorSubsystem.cc
+
+Currrently only works visually, need to fix macro to allow for analysis. 
+
+

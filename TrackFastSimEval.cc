@@ -84,7 +84,7 @@ int TrackFastSimEval::process_event(PHCompositeNode *topNode)
       //cout << track->get_id() << endl;
       ED_Gen->Fill(eta);
       
-      
+      //cout << g4particle->get_name() << endl;
       // Loop through all the reconstructed particles and find a match; how about std::map?;
       for (auto track_itr = _trackmap->begin(); track_itr != _trackmap->end(); track_itr++) {
 	auto track = dynamic_cast<SvtxTrack_FastSim *>(track_itr->second);
@@ -94,7 +94,7 @@ int TrackFastSimEval::process_event(PHCompositeNode *topNode)
 	} //if
 
 
-	cout << g4particle->get_pid() << endl;
+	//cout << "Tracks: " << g4particle->get_truth_track_id() << endl;
 	// Matching reconstructed particle found, use it and break;
 	if ((track->get_truth_track_id() - g4particle->get_track_id()) == 0) {
 	  TVector3 truth_mom(g4particle->get_px(), g4particle->get_py(), g4particle->get_pz());
