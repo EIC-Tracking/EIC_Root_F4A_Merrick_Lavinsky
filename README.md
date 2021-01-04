@@ -35,21 +35,13 @@ cd ../macro
 root -l Fun4All_G4_Tracking.C
 .q
 
-#Newest Version (12/29/2020). To Add rest of Hakan's GDML parts
-#Add the following files to the macro directory in Alexander's EicToyModel.
-#From Hakan's HybridBaseLine Directory (fun4allgdmlimport/macros/hybridBaseline)
+#Newest Version (12/29/2020). To Add rest of Hakan's GDML parts add the following files to the macro directory in Alexander's EicToyModel.
 
-detector_setup.h
-Fst_GDML_.gdml
-Bst_GDML_.gdml
+#From Hakan's HybridBaseLine Directory (fun4allgdmlimport/macros/hybridBaseline): detector_setup.h, Fst_GDML_.gdml, Bst_GDML_.gdml
 
-#From $HOME/myinstall/include/gdmlimporter
-GdmlImportDetectorSubsystem.h
-SimpleNtuple.h
-TrackFastSimEval.h
+#From $HOME/myinstall/include/gdmlimporter: GdmlImportDetectorSubsystem.h, SimpleNtuple.h, TrackFastSimEval.h
 
-#And from /fun4allgdmlimport/source
-GdmlImportDetectorSubsystem.cc
+#And from /fun4allgdmlimport/source: GdmlImportDetectorSubsystem.cc
 
 Currrently only works visually, need to fix macro to allow for analysis. 
 
