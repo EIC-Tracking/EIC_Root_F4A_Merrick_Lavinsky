@@ -46,7 +46,7 @@ int TrackFastSimEval::Init(PHCompositeNode *topNode)
   _eta_dist = new TH1D("_eta_dist", "Eta Distribution of Tracks; Eta; Counts", 100, -5, 5);
 
   ED_Gen = new TH1D("ED_Gen", "Eta Distribution of Generated Hits; Eta; Counts", 100, -5, 5);
-  
+  //cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaaa" << endl;
   return Fun4AllReturnCodes::EVENT_OK;
 } // TrackFastSimEval::Init()
 
@@ -54,6 +54,7 @@ int TrackFastSimEval::Init(PHCompositeNode *topNode)
 
 int TrackFastSimEval::process_event(PHCompositeNode *topNode)
 {
+  //cout << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" << endl;
   if (++_event % 100 == 0) cout << PHWHERE << "Events processed: " << _event << endl;
 
   auto _truth_container = findNode::getClass<PHG4TruthInfoContainer>(topNode, "G4TruthInfo");
@@ -81,7 +82,7 @@ int TrackFastSimEval::process_event(PHCompositeNode *topNode)
       else{ eta = -(-log(tan((M_PI + theta)/2)));
       }
       //std::cout<<" theta "<<theta<<" eta "<<eta<<std::endl;
-      //cout << track->get_id() << endl;
+      //cout << g4particle->phg4hitsNames << endl;
       ED_Gen->Fill(eta);
       
       //cout << g4particle->get_name() << endl;
@@ -119,7 +120,7 @@ int TrackFastSimEval::process_event(PHCompositeNode *topNode)
 int TrackFastSimEval::End(PHCompositeNode *topNode)
 {
   PHTFileServer::get().cd(_outfile_name);
-
+  //cout << "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC" << endl;
   _h1d_Delta_mom->Write();
   _eta_dist->Write();
   ED_Gen->Write();

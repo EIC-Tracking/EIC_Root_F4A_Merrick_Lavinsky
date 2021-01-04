@@ -64,7 +64,7 @@ R__LOAD_LIBRARY(libg4tpc.so)
 
 // This scrip is simple, sorry: either Qt display or tracking; uncomment if want to see the geometry; 
 
-#define _QT_DISPLAY_
+//#define _QT_DISPLAY_
 
 
 //all of these variables are controlled in detecter_setup.h
@@ -129,6 +129,8 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
   // EicRoot media import; neither bound to EicToyModel nor to a particular EicRoot detector;
   EicGeoParData::ImportMediaFile("../../examples/eicroot/media.geo");
 
+#ifdef _VST_
+  
   // EicRoot vertex tracker; be aware: "VST" will also become a SuperDetector name;
   
   auto vst = new EicRootVstSubsystem("VST");
@@ -158,9 +160,12 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
 
     g4Reco->registerSubsystem(vst);
   }
+#endif
+
+#ifdef _MMT_
   
   // EicRoot micromegas central tracker barrels;
-  /*
+  
   auto mmt = new EicRootMuMegasSubsystem("MMT");
   {
     mmt->SetActive(true);
@@ -187,8 +192,9 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
 
     g4Reco->registerSubsystem(mmt);
   }
-  */
-
+  
+#endif
+  
 #ifdef _BEAMPIPE_
   // Central pipe dimension
   // Extracted via mechanical model: Detector chamber 3-20-20
@@ -260,6 +266,18 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
     }
 #endif
 
+#ifdef _BARREL_
+  // Loading barrel from gdml file
+  GdmlImportDetectorSubsystem * svtPart = new GdmlImportDetectorSubsystem();
+  svtPart->set_string_param("GDMPath","Vst_GDML_.gdml"); 
+  //svtPart->OverlapCheck(); //Doesn't do anything, it seems.
+  svtPart->AddAssemblyVolume("VST");	// Barrel. ********** THIS IS THE NAME IN THE GDML FILE, FROM EICROOT ********
+  svtPart->SuperDetector("SVT");
+  svtPart->SetActive();          // this saves hits in the MimosaCore volumes
+  svtPart->SetAbsorberActive();  // this saves hits in all volumes (in the absorber node)
+  g4Reco->registerSubsystem(svtPart);
+#endif
+
 #ifdef _FORWARD_SILICON_DISKS_
   //Forward disks
   GdmlImportDetectorSubsystem * fstPart = new GdmlImportDetectorSubsystem();
@@ -271,7 +289,7 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
   fstPart->SetAbsorberActive();  // this saves hits in all volumes (in the absorber node)
   g4Reco->registerSubsystem(fstPart);
 #endif
-
+  
   
 #ifdef _BACKWARD_SILICON_DISKS_
   //Backward disks
@@ -284,7 +302,7 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
   bstPart->SetAbsorberActive();  // this saves hits in all volumes (in the absorber node)
   g4Reco->registerSubsystem(bstPart);
 #endif
-	
+  	
   
 
 #ifdef _TPC_
@@ -360,6 +378,8 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
 #endif
 
 
+#ifdef _GEMS_
+  
   // Forward GEM tracker module(s);
   auto fgt = new EicRootGemSubsystem("FGT");
   {
@@ -387,6 +407,7 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
 
     g4Reco->registerSubsystem(fgt);
   }
+#endif
 
   // Truth information;
   g4Reco->registerSubsystem(new PHG4TruthSubsystem());
@@ -402,9 +423,13 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
     auto kalman = new PHG4TrackFastSim("PHG4TrackFastSim");
     
     kalman->set_use_vertex_in_fitting(false);
-
+    //===================================
+    kalman->set_sub_top_node_name("SVTX");
+    kalman->set_trackmap_out_name("SvtxTrackMap");
+    //======================================	
     double pixelResolution = 10e-4/sqrt(12);
-    
+
+#ifdef _VST_    
     // Silicon tracker hits;
     
     kalman->add_phg4hits(vst->GetG4HitName(),		// const std::string& phg4hitsNames
@@ -415,9 +440,12 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
 			 5.8e-4,			// longitudinal (z) resolution [cm]
 			 1,				// efficiency (fraction)
 			 0);				// hit noise
+#endif
 
+#ifdef _MMT_
+    
     // MM tracker hits;
-    /*
+    
       kalman->add_phg4hits(mmt->GetG4HitName(),		// const std::string& phg4hitsNames
       PHG4TrackFastSim::Cylinder,	// const DETECTOR_TYPE phg4dettype
       999.,				// radial-resolution [cm] (this number is not used in cylindrical geometry)
@@ -427,8 +455,8 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
       1,				// efficiency (fraction)
       0);				// hit noise
     
-    */
-
+#endif
+    
 #ifdef _BARREL_
     //SVT
     //This adds the hit nodes for EACH LAYER OF THE DETECTOR.
@@ -445,7 +473,7 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
 			   );
     }
 #endif
-	
+    	
 #ifdef _TPC_
     kalman->add_phg4hits(
                          "G4HIT_TPC",                //      const std::string& phg4hitsNames,                                                        
@@ -475,6 +503,8 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
 			   );
     }
 #endif
+    
+    
 #ifdef _BACKWARD_SILICON_DISKS_
     //Backward silicon disks
     for (int i = 50; i < 50+_NO_OF_BACKWARD_DISKS_ ; i++) {
@@ -491,8 +521,9 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
 			   );
     }
 #endif
-	
-	
+    	
+
+#ifdef _GEMS_
     // GEM tracker hits; should work;
     kalman->add_phg4hits(fgt->GetG4HitName(),		// const std::string& phg4hitsNames
 			 PHG4TrackFastSim::Vertical_Plane,	// const DETECTOR_TYPE phg4dettype
@@ -502,17 +533,72 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
 			 70e-4,		        	// longitudinal (z) resolution [cm]
 			 1,				// efficiency (fraction)
 			 0);				// hit noise
-
+    
+#endif
+    
     se->registerSubsystem(kalman);
-  }
 
+    TrackFastSimEval *fast_sim_eval = new TrackFastSimEval("FastTrackingEval");
+    //fast_sim_eval->set_filename(TString(outputFile)+B_label+"_FastTrackingEval.root");
+    //fast_sim_eval->AddProjection(radialBH);
+    //fast_sim_eval->AddProjection(forwardBH);
+    //fast_sim_eval->AddProjection(backwardBH);
+    se->registerSubsystem(fast_sim_eval);
+
+    SimpleNtuple * hits = new SimpleNtuple("Hits");
+    
+#ifdef _BARREL_
+    //SVT starts at 10, to allow for absorbers before
+    //hits->AddNode("ABSORBER_SVT",0); // hits in the passive volumes
+    for (int i = 10; i < 10+_NO_OF_BARREL_LAYERS_; i++) { // hits in the  MimosaCore volumes
+      std::string nodeName = "SVT_" + std::to_string(i); // ****** THIS NEEDS TO MATCH WHAT'S INPUT IN GdmlImportDetector.cc, stripped of the G4HIT, because currently SimpleNtuple adds that.
+      // See SimpleNtuple.cc ******
+      hits->AddNode(nodeName, i);
+    }
+#endif
+    
+#ifdef _TPC_
+    hits->AddNode("TPC", 60);
+#endif
+    
+#ifdef _FORWARD_SILICON_DISKS_
+    //Forward silicon disks
+    hits->AddNode("ABSORBER_FstDisks",3); // hits in the passive volumes
+    for (int i = 40; i < 40+_NO_OF_FORWARD_DISKS_; i++) { // hits in the  MimosaCore volumes
+      std::string nodeName = "FstDisks_" + std::to_string(i); // ****** THIS NEEDS TO MATCH WHAT'S INPUT IN GdmlImportDetector.cc, stripped of the G4HIT, because currently SimpleNtuple adds that.
+      // See SimpleNtuple.cc ******
+      hits->AddNode(nodeName, i);
+    }
+#endif
+    
+    
+#ifdef _BACKWARD_SILICON_DISKS_
+    //Backward silicon disks
+    //hits->AddNode("ABSORBER_BstDisks",4); // hits in the passive volumes
+    for (int i = 50; i < 50+_NO_OF_FORWARD_DISKS_; i++) { // hits in the  MimosaCore volumes
+      std::string nodeName = "BstDisks_" + std::to_string(i); // ****** THIS NEEDS TO MATCH WHAT'S INPUT IN GdmlImportDetector.cc, stripped of the G4HIT, because currently SimpleNtuple adds that.
+      // See SimpleNtuple.cc ******
+      hits->AddNode(nodeName, i);
+    }
+#endif
+    
+    cout << "HHHHHHHHHHHHHHHH" << endl;
+    se->registerSubsystem(hits);
+
+
+  }
+  cout << "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDddDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" << endl;
+  
   // User analysis code: just a single dp/p histogram;
   se->registerSubsystem(new TrackFastSimEval());
-
+  cout << "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << endl;
   // Run it all, eventually;
   se->run(nEvents);
+  cout << "GGGGGGGGGGGGGGG" << endl;
   se->End();
 #endif
+  
+  cout << "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" << endl;
   delete se;
   gSystem->Exit(0);
 } // Fun4All_G4_Sandbox()
