@@ -33,7 +33,16 @@ export ROOT_INCLUDE_PATH=/scratch/build/include/etm:${ROOT_INCLUDE_PATH}
 cd ../macro
 
 root -l Fun4All_G4_Tracking.C
-.q
+
+#For event eta distribution
+_eta_dist->Draw()
+
+#For generated eta distribution
+ED_Gen->Draw()
+
+#For eta resolution
+Eta_res->Draw()
+
 
 #Newest Version (12/29/2020). To Add rest of Hakan's GDML parts add the following files to the macro directory in Alexander's EicToyModel.
 
