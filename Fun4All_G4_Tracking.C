@@ -114,7 +114,7 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
     auto gen = new PHG4ParticleGenerator();
     gen->set_name("pi+");           	  // geantino, pi-, pi+, mu-, mu+, e-., e+, proton, ... 
     gen->set_vtx(0,0,0);		  // Vertex generation range
-    gen->set_mom_range(10,10);	  // Momentum generation range in GeV/c
+    gen->set_mom_range(0,10);	  // Momentum generation range in GeV/c
     gen->set_eta_range(0,4);		  // Detector coverage around theta
     gen->set_phi_range(0.,2.*TMath::Pi());
     se->registerSubsystem(gen); 
@@ -152,10 +152,10 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
       //  - chip center installation radius;
       //  - additional stave slope around beam line direction; [degree];
       //  - layer rotation around beam axis "as a whole"; [degree];
-      vst->AddBarrelLayer(ibcell, 1*3*12,  1*9, 1*3*23.4 * etm::mm, 12.0, 0.0);
-      vst->AddBarrelLayer(ibcell, 2*3*12,  1*9, 2*3*23.4 * etm::mm, 12.0, 0.0);
-      //vst->AddBarrelLayer(ibcell, 3*3*12,  2*9, 3*3*23.4 * etm::mm, 12.0, 0.0);
-      //vst->AddBarrelLayer(ibcell, 4*3*12,  2*9, 4*3*23.4 * etm::mm, 12.0, 0.0);
+      vst->AddBarrelLayer(ibcell, 1*3*12,  1*9, 0.1*3*23.4 * etm::mm, 12.0, 0.0);
+      vst->AddBarrelLayer(ibcell, 2*3*12,  1*9, 0.2*3*23.4 * etm::mm, 12.0, 0.0);
+      vst->AddBarrelLayer(ibcell, 3*3*12,  2*9, 0.3*3*23.4 * etm::mm, 12.0, 0.0);
+      vst->AddBarrelLayer(ibcell, 4*3*12,  2*9, 0.4*3*23.4 * etm::mm, 12.0, 0.0);
     }
 
     g4Reco->registerSubsystem(vst);
@@ -183,8 +183,8 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
       //   - segmentation in phi;
       //   - Z offset from 0.0 (default);
       //   - azimuthal rotation from 0.0 (default);
-      mmt->AddBarrel(layer, 600 * etm::mm, 2, 800 * etm::mm, 3, 0.0, 0.0);
-      mmt->AddBarrel(layer, 600 * etm::mm, 3, 900 * etm::mm, 4, 0.0, 0.0);
+      mmt->AddBarrel(layer, 600 * etm::mm, 2, 300 * etm::mm, 3, 0.0, 0.0);
+      mmt->AddBarrel(layer, 600 * etm::mm, 3, 400 * etm::mm, 4, 0.0, 0.0);
       //mmt->AddBarrel(layer, 2400 * etm::mm, 3, 600 * etm::mm, 4, 0.0, 0.0);
       
       mmt->SetTransparency(50);
@@ -270,11 +270,11 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
   // Loading barrel from gdml file
   GdmlImportDetectorSubsystem * svtPart = new GdmlImportDetectorSubsystem();
   svtPart->set_string_param("GDMPath","Vst_GDML_.gdml"); 
-  //svtPart->OverlapCheck(); //Doesn't do anything, it seems.
+  svtPart->OverlapCheck(); //Doesn't do anything, it seems.
   svtPart->AddAssemblyVolume("VST");	// Barrel. ********** THIS IS THE NAME IN THE GDML FILE, FROM EICROOT ********
   svtPart->SuperDetector("SVT");
-  svtPart->SetActive();          // this saves hits in the MimosaCore volumes
-  svtPart->SetAbsorberActive();  // this saves hits in all volumes (in the absorber node)
+  //svtPart->SetActive();          // this saves hits in the MimosaCore volumes
+  //svtPart->SetAbsorberActive();  // this saves hits in all volumes (in the absorber node)
   g4Reco->registerSubsystem(svtPart);
 #endif
 
@@ -282,11 +282,11 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
   //Forward disks
   GdmlImportDetectorSubsystem * fstPart = new GdmlImportDetectorSubsystem();
   fstPart->set_string_param("GDMPath","Fst_GDML_.gdml"); 
-  //fstPart->OverlapCheck(); //Doesn't do anything, it seems.
+  fstPart->OverlapCheck(); //Doesn't do anything, it seems.
   fstPart->AddAssemblyVolume("FST");	// Disks. ********** THIS IS THE NAME IN THE GDML FILE, FROM EICROOT ********
   fstPart->SuperDetector("FstDisks");
-  fstPart->SetActive();          // this saves hits in the MimosaCore volumes
-  fstPart->SetAbsorberActive();  // this saves hits in all volumes (in the absorber node)
+  //fstPart->SetActive();          // this saves hits in the MimosaCore volumes
+  //fstPart->SetAbsorberActive();  // this saves hits in all volumes (in the absorber node)
   g4Reco->registerSubsystem(fstPart);
 #endif
   
@@ -295,16 +295,14 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
   //Backward disks
   GdmlImportDetectorSubsystem * bstPart = new GdmlImportDetectorSubsystem();
   bstPart->set_string_param("GDMPath","Bst_GDML_.gdml"); 
-  //bstPart->OverlapCheck(); //Doesn't do anything, it seems.
+  bstPart->OverlapCheck(); //Doesn't do anything, it seems.
   bstPart->AddAssemblyVolume("BST");	// Disks. ********** THIS IS THE NAME IN THE GDML FILE, FROM EICROOT ********
   bstPart->SuperDetector("BstDisks");
-  bstPart->SetActive();          // this saves hits in the MimosaCore volumes
-  bstPart->SetAbsorberActive();  // this saves hits in all volumes (in the absorber node)
+  //bstPart->SetActive();          // this saves hits in the MimosaCore volumes
+  //bstPart->SetAbsorberActive();  // this saves hits in all volumes (in the absorber node)
   g4Reco->registerSubsystem(bstPart);
 #endif
   	
-  
-
 #ifdef _TPC_
   // time projection chamber layers ----------------------
   //This is just cylinder subsystems basically.     
@@ -341,7 +339,7 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
           cylTPC->set_double_param("length", G4TPC::cage_length);
           cylTPC->set_string_param("material", G4TPC::tpcgas);
           cylTPC->set_double_param("thickness", tpc_layer_thickness - 0.01);
-          cylTPC->SetActive();
+          cylTPC->SetActive();/////////////////////////////////////////////////////////sets the volume to be active in g4eval
           cylTPC->SuperDetector("TPC");
           g4Reco->registerSubsystem(cylTPC);
 
@@ -377,15 +375,16 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
   g4Reco->registerSubsystem(tpc_endcap);
 #endif
 
-
+  int dz = 20;
 #ifdef _GEMS_
   
   // Forward GEM tracker module(s);
   auto fgt = new EicRootGemSubsystem("FGT");
+  
   {
     fgt->SetActive(true);
-    //fgt->CheckOverlap();
-    //fgt->SetTGeoGeometryCheckPrecision(0.000001 * etm::um);
+    fgt->CheckOverlap();
+    fgt->SetTGeoGeometryCheckPrecision(0.000001 * etm::um);
 
     {
       auto sbs = new GemModule();
@@ -397,27 +396,48 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
       //   - azimuthal segmentation;
       //   - gas volume center radius;
       //   - Z offset from 0.0 (default);
-      //   - azimuthal rotation from 0.0 (default);
-      fgt->AddWheel(sbs, 12, 420 * etm::mm, 1200 * etm::mm, 0);
-      fgt->AddWheel(sbs, 12, 420 * etm::mm, 1300 * etm::mm, 0);
-      //fgt->AddWheel(sbs, 12, 420 * etm::mm, 1000 * etm::mm, 0);
-      //fgt->AddWheel(sbs, 12, 420 * etm::mm, 1100 * etm::mm, 0);
+      //   - azimuthal rotation from 0.0 (default);      
+      //fgt->AddWheel(sbs, 12, 420 * etm::mm, (1000+dz) * etm::mm, 0);
+      //fgt->AddWheel(sbs, 12, 420 * etm::mm, (1100+dz) * etm::mm, 0);
+      fgt->AddWheel(sbs, 12, 420 * etm::mm, (1200+dz) * etm::mm, 0);
+      fgt->AddWheel(sbs, 12, 420 * etm::mm, (1300+dz) * etm::mm, 0);
+      //fgt->AddWheel(sbs, 12, 420 * etm::mm, 1400 * etm::mm, 0);
+      //fgt->AddWheel(sbs, 12, 420 * etm::mm, 1500 * etm::mm, 0);
       //fgt->AddWheel(sbs, 12, 420 * etm::mm, -1300 * etm::mm, 0);
     }
 
     g4Reco->registerSubsystem(fgt);
   }
+    
+  GdmlImportDetectorSubsystem * gemPart = new GdmlImportDetectorSubsystem();
+  gemPart->set_string_param("","GemGeoParData.h"); 
+  gemPart->AddAssemblyVolume("GEM");	// Barrel. ********** THIS IS THE NAME IN THE GDML FILE, FROM EICROOT ********
+  gemPart->SuperDetector("GEM_disk");
+  gemPart->SetActive();          // this saves hits in the MimosaCore volumes
+  gemPart->SetAbsorberActive();  // this saves hits in all volumes (in the absorber node)
+  g4Reco->registerSubsystem(gemPart);
+    
 #endif
-
+  
+    
   // Truth information;
   g4Reco->registerSubsystem(new PHG4TruthSubsystem());
+  //se->registerSubsystem(g4Reco);
+
+  //Register the truth hits
+  PHG4TruthSubsystem *truth = new PHG4TruthSubsystem();
+  g4Reco->registerSubsystem(truth);
+
+
   se->registerSubsystem(g4Reco);
+
 
 #ifdef _QT_DISPLAY_
   g4Reco->InitRun(se->topNode());
   g4Reco->ApplyDisplayAction();
   g4Reco->StartGui();
 #else
+  
   // Ideal track finder and Kalman filter;
   {
     auto kalman = new PHG4TrackFastSim("PHG4TrackFastSim");
@@ -456,7 +476,7 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
       0);				// hit noise
     
 #endif
-    
+      /*
 #ifdef _BARREL_
     //SVT
     //This adds the hit nodes for EACH LAYER OF THE DETECTOR.
@@ -473,7 +493,8 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
 			   );
     }
 #endif
-    	
+      */
+       
 #ifdef _TPC_
     kalman->add_phg4hits(
                          "G4HIT_TPC",                //      const std::string& phg4hitsNames,                                                        
@@ -485,8 +506,8 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
                          0                            //      const float noise                                                                       
                          );
 #endif
-
-    
+   
+    /*    
 #ifdef _FORWARD_SILICON_DISKS_
     //Forward silicon disks
     for (int i = 40; i < 40+_NO_OF_FORWARD_DISKS_ ; i++) {
@@ -521,7 +542,7 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
 			   );
     }
 #endif
-    	
+ 	*/
 
 #ifdef _GEMS_
     // GEM tracker hits; should work;
@@ -546,21 +567,22 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
     se->registerSubsystem(fast_sim_eval);
 
     SimpleNtuple * hits = new SimpleNtuple("Hits");
-    
+    /*
 #ifdef _BARREL_
     //SVT starts at 10, to allow for absorbers before
-    //hits->AddNode("ABSORBER_SVT",0); // hits in the passive volumes
+    hits->AddNode("ABSORBER_SVT",0); // hits in the passive volumes
     for (int i = 10; i < 10+_NO_OF_BARREL_LAYERS_; i++) { // hits in the  MimosaCore volumes
       std::string nodeName = "SVT_" + std::to_string(i); // ****** THIS NEEDS TO MATCH WHAT'S INPUT IN GdmlImportDetector.cc, stripped of the G4HIT, because currently SimpleNtuple adds that.
       // See SimpleNtuple.cc ******
       hits->AddNode(nodeName, i);
     }
 #endif
-    
+    */
 #ifdef _TPC_
     hits->AddNode("TPC", 60);
 #endif
     
+    /*
 #ifdef _FORWARD_SILICON_DISKS_
     //Forward silicon disks
     hits->AddNode("ABSORBER_FstDisks",3); // hits in the passive volumes
@@ -574,26 +596,61 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
     
 #ifdef _BACKWARD_SILICON_DISKS_
     //Backward silicon disks
-    //hits->AddNode("ABSORBER_BstDisks",4); // hits in the passive volumes
+    hits->AddNode("ABSORBER_BstDisks",4); // hits in the passive volumes
     for (int i = 50; i < 50+_NO_OF_FORWARD_DISKS_; i++) { // hits in the  MimosaCore volumes
       std::string nodeName = "BstDisks_" + std::to_string(i); // ****** THIS NEEDS TO MATCH WHAT'S INPUT IN GdmlImportDetector.cc, stripped of the G4HIT, because currently SimpleNtuple adds that.
       // See SimpleNtuple.cc ******
       hits->AddNode(nodeName, i);
     }
 #endif
-    
+    */
+#ifdef _GEMS_
+    hits->AddNode("Tracker_GEMS",70);
+    //std::cout << "GEMS" << std::endl;
+#endif
+    /*
+#ifdef _VST_
+    hits->AddNode("Tracker_VST",70);
+#endif
+
+#ifdef _MMT_
+    hits->AddNode("Tracker_MMT",80);
+#endif
+    */
     cout << "HHHHHHHHHHHHHHHH" << endl;
     se->registerSubsystem(hits);
 
 
   }
   cout << "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDddDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" << endl;
+
+  /*
+   const std::string dst_name = std::string(outputFile)+"_gdmlimporter.root";
+  //Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT",TString(outputFile)+"_gdmlimporter.root");
+  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT",dst_name);
+  out->Verbosity(10);
+  //Let's not output full DST tree right now
+  //se->registerOutputManager(out);
+	
+  
+  if (particle_gen != 1 && particle_gen != 2) {
+		
+    Fun4AllInputManager *in2 = new Fun4AllHepMCInputManager("DSTIN");
+    se->registerInputManager(in2);
+    se->fileopen(in2->Name().c_str(), "../../eventFiles/ggm2ccbar_28_1_100000.dat"); //HepMC event file
+  } else {
+    Fun4AllInputManager *in = new Fun4AllDummyInputManager("JADE");
+    se->registerInputManager(in);
+    }
+  */
+
   
   // User analysis code: just a single dp/p histogram;
   se->registerSubsystem(new TrackFastSimEval());
   cout << "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << endl;
   // Run it all, eventually;
   se->run(nEvents);
+
   cout << "GGGGGGGGGGGGGGG" << endl;
   se->End();
 #endif

@@ -9,7 +9,7 @@
 
 class PHCompositeNode;
 class TH1D;
-
+class TGraph;
 class TrackFastSimEval : public SubsysReco {
  public:
   // Default constructor;
@@ -47,6 +47,12 @@ class TrackFastSimEval : public SubsysReco {
   
   //1D Generated Eta Distribution Hist;
   TH1D *ED_Gen;
+  
+  //1D Generated Eta Distribution Hist;
+  TH1D *Eta_res;
+  
+  TGraph *Eta_rez;
+  int n= 0;
   
 };
 

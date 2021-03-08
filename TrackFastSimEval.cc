@@ -3,6 +3,7 @@
 
 #include <TVector3.h>
 #include <TH1D.h>
+#include <TGraph.h>
 
 #include <trackbase_historic/SvtxTrackMap.h>
 #include <trackbase_historic/SvtxTrack_FastSim.h>
@@ -31,6 +32,7 @@ TrackFastSimEval::TrackFastSimEval(const string &name, const string &filename,
   , _h1d_Delta_mom(nullptr)
   , _eta_dist(nullptr)
   , ED_Gen(nullptr)
+  , Eta_res(nullptr)
 {
 } // TrackFastSimEval::TrackFastSimEval()
 
@@ -41,11 +43,16 @@ int TrackFastSimEval::Init(PHCompositeNode *topNode)
   cout << PHWHERE << " Opening file " << _outfile_name << endl;
   PHTFileServer::get().open(_outfile_name, "RECREATE");
 
-  _h1d_Delta_mom = new TH1D("_h1d_Delta_mom", "#frac{#Delta p}{truth p}", 100, -0.2, 0.2);
+  _h1d_Delta_mom = new TH1D("_h1d_Delta_mom", "Momentum Resolution in Hybrid Model; Momentum Resolution; Counts", 100, -0.2, 0.2);
 
-  _eta_dist = new TH1D("_eta_dist", "Eta Distribution of Tracks; Eta; Counts", 100, -5, 5);
+  _eta_dist = new TH1D("_eta_dist", "Event #eta Distribution of Tracks; #eta; Counts", 100, -5, 5);
 
-  ED_Gen = new TH1D("ED_Gen", "Eta Distribution of Generated Hits; Eta; Counts", 100, -5, 5);
+  ED_Gen = new TH1D("ED_Gen", "Detector #eta Distribution of Generated Hits; #eta; Counts", 100, -5, 5);
+
+  Eta_res = new TH1D("Eta_res", "#eta Resolution; #eta Resolution; Counts", 100, -5, 5);
+
+  Eta_rez = new TGraph();
+
   //cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaaa" << endl;
   return Fun4AllReturnCodes::EVENT_OK;
 } // TrackFastSimEval::Init()
@@ -54,6 +61,7 @@ int TrackFastSimEval::Init(PHCompositeNode *topNode)
 
 int TrackFastSimEval::process_event(PHCompositeNode *topNode)
 {
+  //n=0;
   //cout << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" << endl;
   if (++_event % 100 == 0) cout << PHWHERE << "Events processed: " << _event << endl;
 
@@ -67,6 +75,8 @@ int TrackFastSimEval::process_event(PHCompositeNode *topNode)
 
   {
     auto range = _truth_container->GetPrimaryParticleRange();
+    //cout << "1000?" << range << endl;
+    //cout << g4particle->phg4hitsNames << endl;
     
     // Loop through all the truth particles;
     for (auto truth_itr = range.first; truth_itr != range.second; ++truth_itr) {
@@ -106,8 +116,23 @@ int TrackFastSimEval::process_event(PHCompositeNode *topNode)
 	  //cout << track->get_eta() << endl;
 	  //if()
 	  _eta_dist->Fill(track->get_eta());
-	  //}	  
-	  break;
+
+	  float theta_2 = acos(g4particle->get_pz()/truth_mom.Mag());
+	  float eta_2;
+	  if(theta_2>0){
+	    eta_2 = -log(tan(theta_2/2));}
+	  else{ eta_2 = -(-log(tan((M_PI + theta_2)/2)));
+	  }
+	  //cout << "diff in eta: " << eta_2 - track->get_eta() << ", res: " << (eta_2 - track->get_eta())/eta_2 << endl;
+	  if(eta_2 != 0){
+	    Eta_res->Fill((eta_2 - track->get_eta())/eta_2);
+	    // cout << n << endl;
+	    Eta_rez->SetPoint(n, eta_2, (eta_2 - track->get_eta())/eta_2);
+	    n++;
+	    //}
+	    //}	  
+	    break;
+	  }
 	} //if
       } //for 
     }
@@ -119,11 +144,15 @@ int TrackFastSimEval::process_event(PHCompositeNode *topNode)
 
 int TrackFastSimEval::End(PHCompositeNode *topNode)
 {
+  //Eta_rez->Draw("ALP");
   PHTFileServer::get().cd(_outfile_name);
   //cout << "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC" << endl;
   _h1d_Delta_mom->Write();
   _eta_dist->Write();
   ED_Gen->Write();
+  //Eta_res->Write();
+  Eta_rez->Write();
+  
   
   return Fun4AllReturnCodes::EVENT_OK;
 } // TrackFastSimEval::End()
