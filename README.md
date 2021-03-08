@@ -34,13 +34,13 @@ cd ../macro
 
 root -l Fun4All_G4_Tracking.C
 
-#For event eta distribution
+#For event eta distribution:
 _eta_dist->Draw()
 
-#For generated eta distribution
+#For generated eta distribution:
 ED_Gen->Draw()
 
-#For eta resolution
+#For eta resolution:
 Eta_res->Draw()
 
 
