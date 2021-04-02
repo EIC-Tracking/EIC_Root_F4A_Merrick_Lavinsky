@@ -52,7 +52,7 @@
 #include <TrackFastSimEval.h>
 #include "detector_setup.h"
 
-R__LOAD_LIBRARY(libeicdetectors.so)
+R__LOAD_LIBRARY(libeictoydetectors.so)
 // FIXME: add to CMakeLists.txt;
 R__LOAD_LIBRARY(libg4trackfastsim.so)
 R__LOAD_LIBRARY(libfun4all.so)
@@ -408,7 +408,7 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
 
     g4Reco->registerSubsystem(fgt);
   }
-    
+/*    
   GdmlImportDetectorSubsystem * gemPart = new GdmlImportDetectorSubsystem();
   gemPart->set_string_param("","GemGeoParData.h"); 
   gemPart->AddAssemblyVolume("GEM");	// Barrel. ********** THIS IS THE NAME IN THE GDML FILE, FROM EICROOT ********
@@ -416,12 +416,12 @@ void Fun4All_G4_Tracking(int nEvents = 1000)
   gemPart->SetActive();          // this saves hits in the MimosaCore volumes
   gemPart->SetAbsorberActive();  // this saves hits in all volumes (in the absorber node)
   g4Reco->registerSubsystem(gemPart);
-    
+*/    
 #endif
   
     
   // Truth information;
-  g4Reco->registerSubsystem(new PHG4TruthSubsystem());
+//  g4Reco->registerSubsystem(new PHG4TruthSubsystem());
   //se->registerSubsystem(g4Reco);
 
   //Register the truth hits

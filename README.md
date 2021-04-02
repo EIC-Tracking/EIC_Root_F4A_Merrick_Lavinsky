@@ -1,13 +1,12 @@
 # EIC_Root_F4A_Merrick_Lavinsky
 
-<<<<<<< HEAD
 # This document is for the EIC R&D efforts to determine the best setup for the new detector. These simulations are of the EIC with combined silicon and gaseous detectors. The inal result will be a combination of Alexander Kiselev's repository (https://github.com/eic/EicToyModel.git) and Hakann Wennlof's repository (https://gitlab.com/hwennlof/fun4allgdmlimport.git). Shown below are the commands I use to start each simulation in Fun4All.
 
 singularity shell -B /cvmfs:/cvmfs -B /home/merrick/EicToyModel:/scratch /cvmfs/eic.opensciencegrid.org/singularity/rhic_sl7_ext.simg
 
-source /cvmfs/eic.opensciencegrid.org/x8664_sl7/opt/fun4all/core/bin/eic_setup.sh -n
+source /cvmfs/eic.opensciencegrid.org/gcc-8.3/opt/fun4all/core/bin/eic_setup.sh -n
 
-source /cvmfs/eic.opensciencegrid.org/x8664_sl7/opt/fun4all/core/bin/setup_local.sh $HOME/myinstall
+source /cvmfs/eic.opensciencegrid.org/gcc-8.3/opt/fun4all/core/bin/setup_local.sh $HOME/myinstall
 
 mkdir -p /scratch/build && cd /scratch/build
 
