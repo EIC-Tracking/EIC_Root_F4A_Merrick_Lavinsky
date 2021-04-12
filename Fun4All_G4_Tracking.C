@@ -52,7 +52,7 @@
 #include <TrackFastSimEval.h>
 #include "detector_setup.h"
 
-R__LOAD_LIBRARY(libeictoydetectors.so)
+R__LOAD_LIBRARY(libeictoydetector.so)
 // FIXME: add to CMakeLists.txt;
 R__LOAD_LIBRARY(libg4trackfastsim.so)
 R__LOAD_LIBRARY(libfun4all.so)
