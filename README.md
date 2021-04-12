@@ -17,6 +17,7 @@ make -j6 install
 export LD_LIBRARY_PATH=/scratch/build/lib:${OPT_SPHENIX}/vgm/lib64:${LD_LIBRARY_PATH}
 
 root -l ../scripts/eicroot.C
+
 .q
 
 cd /scratch/fun4all_with_eicroot && mkdir -p build && cd build
